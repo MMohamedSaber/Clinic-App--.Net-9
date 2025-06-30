@@ -1,54 +1,48 @@
 ﻿
+using System.Linq.Expressions;
+using AutoMapper;
 using Clinic.Core.DTOs;
 using Clinic.Core.Entities;
 using Clinic.Core.Interfaces;
+using Clinic.Core.Interfaces.Services;
 using Clinic.Infrastructure.Data;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Clinic.Infrastructure.Repositories
 {
-    public class PatientRepository : IPatientRepository
+    public class PatientRepository : BaseRepository<Patient>, IPatientRepository
     {
+        private readonly IMapper mapper;
+        private readonly AppDbContext _context;
 
-        private readonly UserManager<AppUser> _userManager;
-
-
-
-        public PatientRepository(UserManager<AppUser> userManager) 
+        public PatientRepository(AppDbContext context, IMapper mapper) : base(context)
         {
-            _userManager = userManager;
+            this.mapper = mapper;
+            _context = context;
         }
 
-
-
-        public async  Task<string> RegisterAsync(RegisterPatientDTO PatientDTO)
+        public async Task<IReadOnlyList<PatientResponse>> GetAllAsync(params Expression<Func<Patient, object>>[] Include)
         {
-            if (PatientDTO is null) 
-                return null;
+            var query = _context.Patients.AsNoTracking().AsQueryable();
 
-            if ( await _userManager.FindByEmailAsync(PatientDTO.Email) !=  null)
+            foreach (var item in Include)
             {
-                return "this Email is already Registerd";
+                query = query.Include(item);
             }
 
-            AppUser appUser = new AppUser()
-            {
-                DisplayName = PatientDTO.FullName,
-                UserName = PatientDTO.UserName,
-                Gender=PatientDTO.Gender,
-                DateOfBirth=PatientDTO.DateOfBearth,
-                Email = PatientDTO.Email,
-                Address=PatientDTO.Address
-            };
+            var patinets=await query.ToListAsync();
+            var PatientRespons=mapper.Map<IReadOnlyList< PatientResponse>>(patinets);
 
-            var result = await _userManager.CreateAsync(appUser, PatientDTO.Password);
-            if (!result.Succeeded)
-            {
-                return result.Errors.ToList()[0].Description;
-            }
-
-            return "done";
-
+            return PatientRespons;
         }
+
+        public  async Task<bool> AddAsync(AddPatientDTO patientDto)
+        {
+           var patient= mapper.Map<Patient>(patientDto);
+            await _context.Patients.AddAsync(patient);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }

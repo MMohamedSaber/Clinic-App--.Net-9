@@ -1,8 +1,8 @@
 ﻿namespace Clinic.API.Helper
 {
-    public class ResponsApi
+    public class ResponseApi
     {
-        public ResponsApi(int statusCode, string message = null)
+        public ResponseApi(int statusCode, string message = null)
         {
             StatusCode = statusCode;
             Message = message ?? GetFormStatusCode(StatusCode);

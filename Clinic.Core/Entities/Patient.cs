@@ -3,12 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Clinic.Core.Entities
 {
-    public class Patient : BaseEntity<int>
+    public class Patient :Person
     {
-        public string UserId { get; set; }
-        [ForeignKey(nameof(UserId))]
-    
-        public AppUser User { get; set; }
+        public string Blood_Type { get; set; }
+
+        [ForeignKey("Nurse")]
+        public int NurseId { get; set; }
+        public virtual Nurse Nurse { get; set; }
+
+     //   public virtual ICollection<MedicalRecord> MedicalRecord { get; set; }
+     //   public virtual ICollection<Appointment> Appointments { get; set; }
 
     }
     

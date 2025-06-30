@@ -22,7 +22,7 @@ namespace Clinic.Infrastructure
             // apply dbContext 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IGenerateToken, GenerateToken>();
-
+            services.AddScoped<IEmailService, EmailService>();
 
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer
@@ -33,6 +33,7 @@ namespace Clinic.Infrastructure
                     .AddEntityFrameworkStores<AppDbContext>()
                     .AddDefaultTokenProviders();
 
+            
 
             //apply unit of work
 

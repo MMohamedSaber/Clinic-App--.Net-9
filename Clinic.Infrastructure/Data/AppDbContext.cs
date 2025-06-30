@@ -1,4 +1,7 @@
-﻿using Clinic.Core.Entities;
+﻿using System.Reflection;
+using Clinic.Core.Entities;
+using Clinic.Core.Entities.demo.Models;
+using Clinic.Infrastructure.Data.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -10,13 +13,17 @@ namespace Clinic.Infrastructure.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Patient> Patients{ get; set; }
+        public DbSet<Nurse> Nurses{ get; set; }
+        public DbSet<Staff> Staff{ get; set; }
+        public DbSet<Department> Departments{ get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Doctor>().HasNoKey();
-            modelBuilder.Entity<Patient>().HasNoKey();
+           
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
         }
     }
 }

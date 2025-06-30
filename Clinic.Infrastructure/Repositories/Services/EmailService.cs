@@ -19,8 +19,9 @@ namespace Clinic.Infrastructure.Repositories.Services
         public async Task SendEmail(EmailDTO emailDTO)
         {
             MimeMessage message = new MimeMessage();
-            message.From.Add(new MailboxAddress("My Ecom", configuration["EmailSetting:From"]));
+            message.From.Add(new MailboxAddress("Clinic Support", configuration["EmailSetting:From"]));
             message.To.Add(new MailboxAddress(emailDTO.To, emailDTO.To));
+            message.Subject = emailDTO.Subject;
             message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
             {
                 Text = emailDTO.Content,
@@ -40,9 +41,9 @@ namespace Clinic.Infrastructure.Repositories.Services
                     await smtp.SendAsync(message);
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
+                    Console.WriteLine("Email send failed: " + ex.Message);
                 }
                 finally
                 {

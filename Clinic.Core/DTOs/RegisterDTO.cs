@@ -1,23 +1,29 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using Clinic.Core.Attributes;
 
 namespace Clinic.Core.DTOs
 {
-    public class  User
+    public class RegisterDTO
     {
         public string FullName { get; set; }
         public string UserName { get; set; }
-        public string Email { get; set; }   
-        public string Password { get; set; }
+        public string Blood_Type { get; set; }
         public string DateOfBearth { get; set; }
         public string Gender { get; set; }
+        //=======================
+        public string Governorate { get; set; }
+        public string City { get; set; }
         public string Address { get; set; }
+        //==========================
+        public string Email { get; set; }   
+        public string phoneNumber { get; set; }   
+
+        public string Password { get; set; }
     }
 
 
-    public class RegisterPatientDTO : User
-    {
-    }
+   
 
     public class LoginDTO
     {
@@ -31,4 +37,12 @@ namespace Clinic.Core.DTOs
         public string Token { get; set; }
     }
 
+
+    public class ResetPasswordDTO :LoginDTO
+    {
+
+        public string Token { get; set; }
+
+
+    }
 }
