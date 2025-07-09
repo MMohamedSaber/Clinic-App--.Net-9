@@ -1,4 +1,5 @@
-﻿using Clinic.Core.Entities.demo.Models;
+﻿using Clinic.Core.Entities;
+using Clinic.Core.Entities.demo.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +13,10 @@ namespace Clinic.Infrastructure.Data.Configurations
 
             builder.Property(s => s.Id).HasColumnName("Id")
         .ValueGeneratedOnAdd();
+
+            builder.HasOne(s => s.User)
+                   .WithOne(AppUser => AppUser.Staff);
+
 
         }
     }

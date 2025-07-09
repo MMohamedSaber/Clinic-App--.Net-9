@@ -1,7 +1,7 @@
-
-using Microsoft.Data.SqlClient;
-using Clinic.Infrastructure;
 using Clinic.API.Middleware;
+using Clinic.API.Validator;
+using Clinic.Infrastructure;
+using FluentValidation;
 namespace Clinic.API
 {
     public class Program
@@ -20,15 +20,14 @@ namespace Clinic.API
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             builder.Services.infrastructureConfiguration(builder.Configuration);
-            //builder.Services.AddCors(options =>
-            //{
-            //    options.AddPolicy("AllowSwaggerUI", policy =>
-            //    {
-            //        policy.WithOrigins("https://localhost:7137") // Õÿ —«»ÿ Swagger Â‰«
-            //              .AllowAnyMethod()
-            //              .AllowAnyHeader();
-            //    });
-            //});
+            builder.Services.AddHttpContextAccessor();
+
+            // Registers all validators (like UserValidator) found in the same assembly.
+            // This scans the assembly for all classes that inherit from AbstractValidator<T> and registers them.
+            builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<LoginValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<NurseValidator>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -42,7 +41,6 @@ namespace Clinic.API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

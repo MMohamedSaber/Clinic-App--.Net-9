@@ -20,25 +20,20 @@ namespace Clinic.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
         {
-
-            string  result="";
-           
-                 result = await _unitOfWork.AuthRepository.RegisterAsync(registerDTO);
-            
+            string result = await _unitOfWork.AuthRepository.RegisterAsync(registerDTO);
 
             if (result == "done")
             {
                 return Ok(new ResponseApi(200, result));
             }
-
-            return BadRequest(new ResponseApi(400,   result));
+            return BadRequest(new ResponseApi(400, result));
         }
 
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDTO login)
         {
-            var result =await _unitOfWork.AuthRepository.LoginAsync(login);
+            var result = await _unitOfWork.AuthRepository.LoginAsync(login);
 
             if (result == null || result.StartsWith("check"))
             {
@@ -62,6 +57,9 @@ namespace Clinic.API.Controllers
         [HttpPost("active-account")]
         public async Task<IActionResult> ActiveAccount(ActiveAccountDTO activeAccount)
         {
+            if (string.IsNullOrWhiteSpace(activeAccount.Email) || !activeAccount.Email.Contains("@"))
+                return BadRequest("Invalid email");
+
             var result = await _unitOfWork.AuthRepository.ActiveAccount(activeAccount);
             return result ? Ok(new ResponseApi(200, "Activation done")) : BadRequest(new ResponseApi(400));
         }

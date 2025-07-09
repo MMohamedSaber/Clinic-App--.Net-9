@@ -4,6 +4,7 @@ using Clinic.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Clinic.Infrastructure.Data.migs
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250704082422_LinkUserwithStaffAndEditing")]
+    partial class LinkUserwithStaffAndEditing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,16 +53,16 @@ namespace Clinic.Infrastructure.Data.migs
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Gender")
                         .IsRequired()
@@ -173,17 +176,41 @@ namespace Clinic.Infrastructure.Data.migs
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AppUserId")
+                    b.Property<DateOnly>("BDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Blood_Type")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Governorate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NurseId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("AppUserId")
-                        .IsUnique();
+                    b.HasKey("Id");
 
                     b.HasIndex("NurseId");
 
@@ -203,8 +230,35 @@ namespace Clinic.Infrastructure.Data.migs
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateOnly>("BDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Governorate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("No_Of_Hour")
                         .HasColumnType("int");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Qualifications")
                         .IsRequired()
@@ -391,12 +445,6 @@ namespace Clinic.Infrastructure.Data.migs
 
             modelBuilder.Entity("Clinic.Core.Entities.Patient", b =>
                 {
-                    b.HasOne("Clinic.Core.Entities.AppUser", "User")
-                        .WithOne("Patient")
-                        .HasForeignKey("Clinic.Core.Entities.Patient", "AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Clinic.Core.Entities.Nurse", "Nurse")
                         .WithMany("Patients")
                         .HasForeignKey("NurseId")
@@ -404,8 +452,6 @@ namespace Clinic.Infrastructure.Data.migs
                         .IsRequired();
 
                     b.Navigation("Nurse");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Clinic.Core.Entities.demo.Models.Staff", b =>
@@ -480,9 +526,6 @@ namespace Clinic.Infrastructure.Data.migs
 
             modelBuilder.Entity("Clinic.Core.Entities.AppUser", b =>
                 {
-                    b.Navigation("Patient")
-                        .IsRequired();
-
                     b.Navigation("Staff")
                         .IsRequired();
                 });

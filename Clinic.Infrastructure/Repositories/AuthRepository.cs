@@ -1,29 +1,31 @@
 ﻿
+using AutoMapper;
 using Clinic.Core.DTOs;
 using Clinic.Core.Entities;
 using Clinic.Core.Interfaces.Services;
 using Clinic.Core.Shared;
 using Clinic.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
-using System;
 
 namespace Clinic.Core.Interfaces
 {
-    public  class AuthRepository : IAuthRepository
+    public class AuthRepository : IAuthRepository
     {
         protected readonly UserManager<AppUser> _userManager;
         protected readonly SignInManager<AppUser> _signInManager;
         protected readonly IGenerateToken _generateToken;
         protected readonly AppDbContext _context;
         protected readonly IEmailService _emailService;
+        private readonly IMapper _mapper;
 
-        public AuthRepository(UserManager<AppUser> userManager, AppDbContext context, IGenerateToken generateToken, SignInManager<AppUser> signInManager, IEmailService emailService)
+        public AuthRepository(UserManager<AppUser> userManager, AppDbContext context, IGenerateToken generateToken, SignInManager<AppUser> signInManager, IEmailService emailService, IMapper mapper)
         {
             _userManager = userManager;
             _context = context;
             _generateToken = generateToken;
             _signInManager = signInManager;
             _emailService = emailService;
+            _mapper = mapper;
         }
 
         public async Task<string> LoginAsync(LoginDTO loginDto)
@@ -36,7 +38,7 @@ namespace Clinic.Core.Interfaces
             if (!findUser.EmailConfirmed)
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(findUser);
-                 await SendEmail(findUser.Email, token, "Active", "ActiveMail", "Please Active your email by click on the button");
+                await SendEmail(findUser.Email, token, "Active", "ActiveMail", "Please Active your email by click on the button");
                 return "Please confirm your email first ,we have send activate code to your email";
             }
 
@@ -62,19 +64,9 @@ namespace Clinic.Core.Interfaces
                 return "this Email is already Registerd";
             }
 
-            AppUser appUser = new AppUser()
-            {
-                Email = registerDTO.Email,
-                DisplayName = registerDTO.FullName,
-                DateOfBirth=registerDTO.DateOfBearth,
-                Address= registerDTO.Address,
-                Governorate=registerDTO.Governorate,
-                City=registerDTO.City,
-                Gender=registerDTO.Gender,
-                Blood_Type = registerDTO.Blood_Type,
-                UserName = registerDTO.UserName,
-                PhoneNumber=registerDTO.phoneNumber,
-            };
+            AppUser appUser = _mapper.Map<AppUser>(registerDTO);
+
+
 
             var result = await _userManager.CreateAsync(appUser, registerDTO.Password);
 
@@ -109,12 +101,12 @@ namespace Clinic.Core.Interfaces
         }
         public async Task SendEmail(string Email, string code, string componant, string subject, string message)
         {
-             var emailDto = new EmailDTO(
-                Email,
-                "mohamedsabertamer1@gmail.com",
-                subject,
-                EmailStringBody.Send(Email, code, componant, message)
-                );
+            var emailDto = new EmailDTO(
+               Email,
+               "mohamedsabertamer1@gmail.com",
+               subject,
+               EmailStringBody.Send(Email, code, componant, message)
+               );
 
             await _emailService.SendEmail(emailDto);
         }

@@ -15,6 +15,8 @@ namespace Clinic.Infrastructure.Data.Configurations
             builder.HasOne(d => d.Staff)
                     .WithOne(s => s.Nurce)
                     .HasForeignKey<Nurse>(d => d.Id);
+
+
         }
     }
 }

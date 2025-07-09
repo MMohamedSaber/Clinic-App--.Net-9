@@ -1,11 +1,11 @@
 ﻿
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Clinic.Core.Entities;
 using Clinic.Core.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Clinic.Infrastructure.Repositories.Services
 {
@@ -21,10 +21,11 @@ namespace Clinic.Infrastructure.Repositories.Services
         public string GetAndCreateToken(AppUser appUser)
         {
             List<Claim> claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.Name, appUser.UserName),
-                new Claim(ClaimTypes.Email, appUser.Email),
-            };
+                {
+                    new Claim(ClaimTypes.NameIdentifier, appUser.Id),
+                    new Claim(ClaimTypes.Name, appUser.UserName),
+                    new Claim(ClaimTypes.Email, appUser.Email),
+                };
 
             var Security = configuration["Token:Secret"];
             var key = Encoding.ASCII.GetBytes(Security);
